@@ -3,14 +3,14 @@ import pandas as pd
 import plotly.express as px
 
 # Load dataset
-df = pd.read_csv("C:\\manju\\app_cre\\my_pro1\\strli\\employee_performance.csv")
+df = pd.read_csv("C:\\manju\\app_cre\\my_pro1\\strli\\employee_performance.csv") 
 
 # Convert the column to a numeric type, forcing errors to NaN if conversion fails
 df["Performance_Score"] = pd.to_numeric(df["Performance_Score"], errors='coerce')
 # Fill NaNs with 0 or drop them if you prefer
 df = df.dropna(subset=["Performance_Score"])
 
-# Dashboard title
+# Dashboard title 6666
 st.title("📊 Employee Performance Dashboard")
 
 # Show raw data
