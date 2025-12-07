@@ -1,0 +1,6 @@
+Employee_ID,Department,Years_Experience,Training_Hours,Performance_Score,Feedback_Rating,Attrition
+1001,Sales,5,25,0.85,Excellent,No
+1002,IT,2,40,0.62,Needs Improvement,Yes
+1003,HR,10,15,0.95,Outstanding,No
+1004,Marketing,1,50,0.78,Good,No
+1005,Sales,7,30,0.55,Poor,Yes

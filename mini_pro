@@ -1,0 +1,134 @@
+# student_app.py
+import json
+from typing import List, Optional
+
+DATA_FILE = "students.json"
+
+class Student:
+    def __init__(self, student_id: int, name: str, age: int, program: str):
+        self.student_id = student_id
+        self.name = name
+        self.age = age
+        self.program = program
+
+    def to_dict(self):
+        return {
+            "student_id": self.student_id,
+            "name": self.name,
+            "age": self.age,
+            "program": self.program
+        }
+
+    @staticmethod
+    def from_dict(data: dict):
+        return Student(
+            student_id=int(data["student_id"]),
+            name=str(data["name"]),
+            age=int(data["age"]),
+            program=str(data["program"])
+        )
+def load_students() -> List[Student]:
+    try:    
+        with open(DATA_FILE, "r") as f:
+            raw = json.load(f)
+            return [Student.from_dict(item) for item in raw]
+    except FileNotFoundError:
+        # Initialize empty file on first run
+        with open(DATA_FILE, "w") as f:
+            json.dump([], f)
+        return []
+    except json.JSONDecodeError:
+        print("Warning: Data file corrupted. Starting fresh.")
+        return []
+
+def save_students(students: List[Student]) -> None:
+    with open(DATA_FILE, "w") as f:
+        json.dump([s.to_dict() for s in students], f, indent=2)
+def add_student(students: List[Student], student_id: int, name: str, age: int, program: str) -> bool:
+    # Prevent duplicate IDs
+    for s in students:
+        if s.student_id == student_id:
+            print(f"Error: Student ID {student_id} already exists.")
+            return False
+
+    # Simple validation
+    if age <= 0:
+        print("Error: Age must be a positive integer.")
+        return False
+    if not name.strip():
+        print("Error: Name cannot be empty.")
+        return False
+    if not program.strip():
+        print("Error: Program cannot be empty.")
+        return False
+
+    students.append(Student(student_id, name.strip(), age, program.strip()))
+    save_students(students)
+    print(f"Student {name} added successfully.")
+    return True
+
+def list_students(students: List[Student]) -> None:
+    if not students:
+        print("No students found.")
+        return
+    print("Students:")
+    for s in students:
+        print(f"- ID: {s.student_id} | {s.name}, {s.age} | Program: {s.program}")
+
+def find_student(students: List[Student], student_id: int) -> Optional[Student]:
+    for s in students:
+        if s.student_id == student_id:
+            return s
+    return None
+def get_int(prompt: str) -> Optional[int]:
+    try:
+        return int(input(prompt).strip())
+    except ValueError:
+        print("Please enter a valid integer.")
+        return None
+
+def main():
+    print("Student Management System")
+    students = load_students()
+
+    while True:
+        print("\nMenu:")
+        print("1. Add student")
+        print("2. List students")
+        print("3. Find student by ID")
+        print("4. Exit")
+
+        choice = input("Choose an option (1-4): ").strip()
+
+        if choice == "1":
+            sid = get_int("Enter student ID: ")
+            if sid is None:
+                continue
+            name = input("Enter name: ").strip()
+            age = get_int("Enter age: ")
+            if age is None:
+                continue
+            program = input("Enter program: ").strip()
+            add_student(students, sid, name, age, program)
+
+        elif choice == "2":
+            list_students(students)
+
+        elif choice == "3":
+            sid = get_int("Enter student ID to search: ")
+            if sid is None:
+                continue
+            student = find_student(students, sid)
+            if student:
+                print(f"Found: ID {student.student_id} | {student.name}, {student.age} | {student.program}")
+            else:
+                print("Student not found.")
+
+        elif choice == "4":
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please select 1-4.")
+
+if __name__ == "__main__":
+    main()        
